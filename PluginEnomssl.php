@@ -28,29 +28,29 @@ class PluginEnomssl extends SSLPlugin
     function getVariables()
     {
         $variables = array(
-            /*T*/'Plugin Name'/*/T*/ => array (
+            lang('Plugin Name') => array (
                                 'type'          =>'hidden',
-                                'description'   =>/*T*/'How CE sees this plugin (not to be confused with the Signup Name)'/*/T*/,
-                                'value'         =>/*T*/'eNomSSL'/*/T*/
+                                'description'   =>lang('How CE sees this plugin (not to be confused with the Signup Name)'),
+                                'value'         =>lang('eNomSSL')
                                ),
-            /*T*/'Use testing server'/*/T*/ => array(
+            lang('Use testing server') => array(
                                 'type'          =>'yesno',
-                                'description'   =>/*T*/'Select Yes if you wish to use Enom\'s testing environment, so that transactions are not actually made. For this to work, you must first register you server\'s ip in Enom\'s testing environment, and your server\'s name servers must be registered there as well.'/*/T*/,
+                                'description'   =>lang('Select Yes if you wish to use Enom\'s testing environment, so that transactions are not actually made. For this to work, you must first register you server\'s ip in Enom\'s testing environment, and your server\'s name servers must be registered there as well.'),
                                 'value'         =>0
                                ),
-            /*T*/'Login'/*/T*/ => array(
+            lang('Login') => array(
                                 'type'          =>'text',
-                                'description'   =>/*T*/'Enter your username for your eNom reseller account.'/*/T*/,
+                                'description'   =>lang('Enter your username for your eNom reseller account.'),
                                 'value'         =>''
                                ),
-            /*T*/'Password'/*/T*/  => array(
+            lang('Password')  => array(
                                 'type'          =>'password',
-                                'description'   =>/*T*/'Enter the password for your eNom reseller account.'/*/T*/,
+                                'description'   =>lang('Enter the password for your eNom reseller account.'),
                                 'value'         =>'',
                                 ),
-             /*T*/'Actions'/*/T*/ => array (
+             lang('Actions') => array (
                                 'type'          => 'hidden',
-                                'description'   => /*T*/'Current actions that are active for this plugin'/*/T*/,
+                                'description'   => lang('Current actions that are active for this plugin'),
                                 'value'         => 'Purchase,ResendApproverEmail (Resend Approver Email),CancelConfiguration (Cancel Configuration),ResendFulfillmentEmail (Resend Fulfillment Email)'
                                 ),
         );
