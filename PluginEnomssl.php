@@ -448,7 +448,7 @@ class PluginEnomssl extends SSLPlugin
             case SSL_CERT_RAPIDSSL:
                 return 'Certificate-RapidSSL-RapidSSL';
             case SSL_CERT_GEOTRUST_QUICKSSL_PREMIUM:
-                return 'Certificate-GeoTrust-QuickSSL';
+                return 'Certificate-GeoTrust-QuickSSL-Premium';
             case SSL_CERT_GEOTRUST_TRUE_BUSINESSID:
                 return 'Certificate-GeoTrust-TrueBizID';
             case SSL_CERT_GEOTRUST_TRUE_BUSINESSID_EV:
