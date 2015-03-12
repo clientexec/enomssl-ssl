@@ -95,7 +95,7 @@ class PluginEnomssl extends SSLPlugin
             }
         }
         if ( $foundEmail == false )  {
-            throw new CE_Exception('Invalid Admin Approver E-mail: ' . $params['adminEmail']);
+            throw new CE_Exception('Invalid Admin Approver E-mail: ' . $params['adminEmail'] . " Valid Emails: " . implode(" ", $emails));
         }
     }
 
