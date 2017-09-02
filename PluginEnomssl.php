@@ -601,8 +601,6 @@ class PluginEnomssl extends SSLPlugin
                 $actions[] = 'ResendApproverEmail (Resend Approver Email)';
             } else if ( $status == 'Certificate Issued' || $status == 'Approved by Domain Owner' ) {
                 $actions[] = 'ResendFulfillmentEmail (Resend Fulfillment Email)';
-            } else if ( $status == 'Certificate Issued' ) {
-
             }
         } catch ( CE_Exception $e ) {
             $actions[] = 'Purchase';
