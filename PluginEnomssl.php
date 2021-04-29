@@ -20,7 +20,8 @@ class PluginEnomssl extends SSLPlugin
         SSL_CERT_COMODO_PREMIUM_WILDCARD                => 213,
         SSL_CERT_COMODO_ESSENTIAL_WILDCARD              => 214,
         SSL_CERT_COMODO_EV                              => 221,
-        SSL_CERT_COMODO_EV_SGC                          => 222
+        SSL_CERT_COMODO_EV_SGC                          => 222,
+        SSL_CERT_RAPIDSSL_WILDCARD                      => 285
     );
 
     public $usingInviteURL = false;
@@ -88,13 +89,13 @@ class PluginEnomssl extends SSLPlugin
         $emails = $this->getApproverEmail($params);
         $foundEmail = false;
         foreach ( $emails as $email ) {
-            if  ( $email == $params['adminEmail'] ) {
+            if ( $email == $params['adminEmail'] ) {
                 $foundEmail = true;
                 $this->sendForApproval($params, $email);
                 return 'Successfully Sent Certificate for Approval';
             }
         }
-        if ( $foundEmail == false )  {
+        if ( $foundEmail == false ) {
             throw new CE_Exception('Invalid Admin Approver E-mail: ' . $params['adminEmail'] . " Valid Emails: " . implode(" ", $emails));
         }
     }
@@ -110,11 +111,12 @@ class PluginEnomssl extends SSLPlugin
         );
 
         $response = $this->_makeRequest($params, $arguments);
-        if (!is_object($response)) throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        if (!is_object($response)) {
+            throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        }
 
         if ( $response->ErrCount > 0 ) {
             throw new CE_Exception('eNomSSL Plugin Error: ' . $response->errors->Err1);
-        } else if ( strval($response->Done) == 'true' ) {
         }
     }
 
@@ -129,11 +131,13 @@ class PluginEnomssl extends SSLPlugin
         );
 
         $response = $this->_makeRequest($params, $arguments);
-        if (!is_object($response)) throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        if (!is_object($response)) {
+            throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        }
 
         if ( $response->ErrCount > 0 ) {
             throw new CE_Exception('eNomSSL Plugin Error: ' . $response->errors->Err1);
-        } else if ( strval($response->CertGetApproverEMail->Success) == 'True' ) {
+        } else if ( strtolower(strval($response->CertGetApproverEMail->Success)) == 'true' ) {
             $emails = array();
             foreach ( $response->CertGetApproverEMail->Approver as $approver ) {
                 if ( isset($approver->ApproverEmail) ) {
@@ -213,14 +217,14 @@ class PluginEnomssl extends SSLPlugin
         }
 
         $response = $this->_makeRequest($params, $arguments);
-        if (!is_object($response)) throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        if (!is_object($response)) {
+            throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        }
 
         CE_Lib::log(4, 'Cert Configure Cert: ' . print_r($response, true));
 
         if ( $response->ErrCount > 0 ) {
             throw new CE_Exception('eNomSSL Plugin Error: ' . $response->errors->Err1);
-        } else if ( strval($response->Success) == 'True' ) {
-
         }
     }
 
@@ -236,13 +240,15 @@ class PluginEnomssl extends SSLPlugin
         );
 
         $response = $this->_makeRequest($params, $arguments);
-        if (!is_object($response)) throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        if (!is_object($response)) {
+            throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        }
 
         CE_Lib::log(4, print_r($response, true));
 
         if ( $response->ErrCount > 0 ) {
             throw new CE_Exception('eNomSSL Plugin Error: ' . $response->errors->Err1);
-        } else if ( strval($response->Done) == 'true' ) {
+        } else if ( strtolower(strval($response->Done)) == 'true' ) {
             return intval($response->certid);
         }
         return -1;
@@ -262,11 +268,13 @@ class PluginEnomssl extends SSLPlugin
         );
 
         $response = $this->_makeRequest($params, $arguments);
-        if (!is_object($response)) throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        if (!is_object($response)) {
+            throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        }
 
         if ( $response->ErrCount > 0 ) {
             throw new CE_Exception('eNomSSL Plugin Error: ' . $response->errors->Err1);
-        } else if ( $response->CertParseCSR->Success == 'True' ) {
+        } else if ( strtolower($response->CertParseCSR->Success) == 'true' ) {
             $return = array();
 
             $return['domain'] = strval($response->CertParseCSR->DomainName);
@@ -294,11 +302,13 @@ class PluginEnomssl extends SSLPlugin
         );
         $response = $this->_makeRequest($params, $arguments);
 
-        if (!is_object($response)) throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        if (!is_object($response)) {
+            throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        }
 
         if ( $response->ErrCount > 0 ) {
             throw new CE_Exception('eNomSSL Plugin Error: ' . $response->errors->Err1);
-        } else if (  strval($response->Done) == 'true' ) {
+        } else if ( strtolower(strval($response->Done)) == 'true' ) {
             $expirationDate = strval($response->CertGetCertDetail->ExpirationDate);
             $userPackage->setCustomField('Certificate Expiration Date', $expirationDate);
 
@@ -324,11 +334,13 @@ class PluginEnomssl extends SSLPlugin
         );
         $response = $this->_makeRequest($params, $arguments);
 
-        if (!is_object($response)) throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        if (!is_object($response)) {
+            throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        }
 
         if ( $response->ErrCount > 0 ) {
             throw new CE_Exception('eNomSSL Plugin Error: ' . $response->errors->Err1);
-        }  else if ( strval($response->CertResendApproverEmail->Success) == 'True' ) {
+        } else if ( strtolower(strval($response->CertResendApproverEmail->Success)) == 'true' ) {
             return 'Successfully resent approver email.';
         }
     }
@@ -346,13 +358,15 @@ class PluginEnomssl extends SSLPlugin
         );
         $response = $this->_makeRequest($params, $arguments);
 
-        if (!is_object($response)) throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        if (!is_object($response)) {
+            throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        }
 
         CE_Lib::log(4, print_r($response, true));
 
         if ( $response->ErrCount > 0 ) {
             throw new CE_Exception('eNomSSL Plugin Error: ' . $response->errors->Err1);
-        }  else if ( strval($response->CertModifyOrder->Done) == 'true' ) {
+        } else if ( strtolower(strval($response->CertModifyOrder->Done)) == 'true' ) {
             return 'Successfully cancelled configuration of certificate.';
         }
     }
@@ -370,13 +384,15 @@ class PluginEnomssl extends SSLPlugin
         );
         $response = $this->_makeRequest($params, $arguments);
 
-        if (!is_object($response)) throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        if (!is_object($response)) {
+            throw new CE_Exception('eNomSSL Plugin Error: Failed to communicate with Enom', EXCEPTION_CODE_CONNECTION_ISSUE);
+        }
 
         CE_Lib::log(4, print_r($response, true));
 
         if ( $response->ErrCount > 0 ) {
             throw new CE_Exception('eNomSSL Plugin Error: ' . $response->errors->Err1);
-        }  else if ( strval($response->CertResendFulfillmentEmail->Success) == 'True' ) {
+        } else if ( strtolower(strval($response->CertResendFulfillmentEmail->Success)) == 'true' ) {
             return 'Successfully resent fulfillment email.';
         }
 
@@ -384,32 +400,46 @@ class PluginEnomssl extends SSLPlugin
 
     function _makeRequest($params, $arguments)
     {
-        require_once 'library/CE/NE_Network.php';
+        include_once 'library/CE/NE_Network.php';
 
         // default paramters
-        if (!isset($params['secure'])) $params['secure'] = true;
-        if (!isset($params['test'])) $params['test'] = false;
+        if (!isset($params['secure'])) {
+            $params['secure'] = true;
+        }
+        if (!isset($params['test'])) {
+            $params['test'] = false;
+        }
 
         $request = 'https://';
 
-        if (@$this->settings->get('plugin_enomssl_Use testing server')) $request .= 'resellertest.enom.com/interface.asp';
-        else $request .= 'reseller.enom.com/interface.asp';
+        if (@$this->settings->get('plugin_enomssl_Use testing server')) {
+            $request .= 'resellertest.enom.com/interface.asp';
+        } else {
+            $request .= 'reseller.enom.com/interface.asp';
+        }
 
         $arguments['responsetype'] = 'XML';
 
         $i = 0;
         foreach ($arguments as $name => $value) {
             $value = urlencode($value);
-            if (!$i) $request .= "?$name=$value";
-            else $request .= "&$name=$value";
+            if (!$i) {
+                $request .= "?$name=$value";
+            } else {
+                $request .= "&$name=$value";
+            }
             $i++;
         }
 
         CE_Lib::log(4, 'eNomSSL Params: '. print_r($arguments, true));
         $response = NE_Network::curlRequest($this->settings, $request, false, false, true);
 
-        if (is_a($response, 'CE_Error')) throw new Exception ($response);
-        if (!$response) return false;   // don't want xmlize an empty array
+        if (is_a($response, 'CE_Error')) {
+            throw new Exception ($response);
+        }
+        if (!$response) {
+            return false;   // don't want xmlize an empty array
+        }
 
         libxml_use_internal_errors(true);
         $response = simplexml_load_string($response);
@@ -438,7 +468,8 @@ class PluginEnomssl extends SSLPlugin
             213 => 'Comodo Premium Wildcard',
             214 => 'Comodo Essential Wildcard',
             221 => 'Comodo EV',
-            222 => 'Comodo EV SGC'
+            222 => 'Comodo EV SGC',
+            285 => 'RapidSSL Wildcard'
         );
     }
 
@@ -447,6 +478,8 @@ class PluginEnomssl extends SSLPlugin
         switch ( $id ) {
             case SSL_CERT_RAPIDSSL:
                 return 'Certificate-RapidSSL-RapidSSL';
+            case SSL_CERT_RAPIDSSL_WILDCARD:
+                return 'Certificate-RapidSSL-RapidSSL-Wildcard';
             case SSL_CERT_GEOTRUST_QUICKSSL_PREMIUM:
                 return 'Certificate-GeoTrust-QuickSSL-Premium';
             case SSL_CERT_GEOTRUST_TRUE_BUSINESSID:
@@ -483,12 +516,11 @@ class PluginEnomssl extends SSLPlugin
     function getWebserverTypes($type)
     {
         $serviceName = $this->getServiceNameById($type);
-        if ( substr($serviceName, 0, 18) == 'Certificate-Comodo' )  {
+        if ( substr($serviceName, 0, 18) == 'Certificate-Comodo' ) {
             $type = 'comodo';
         } else {
             $type = 'geo';
         }
-
 
         if ( strtolower($type) == 'comodo' ) {
             $return = array (
@@ -526,7 +558,7 @@ class PluginEnomssl extends SSLPlugin
                 1032 => 'H-Sphere'
             );
         } else {
-           $return = array (
+            $return = array (
                 1 => 'Apache + MOD SSL',
                 2 => 'Apache + Raven',
                 3 => 'Apache + SSLeay',
@@ -565,7 +597,7 @@ class PluginEnomssl extends SSLPlugin
         // strip all non numerical values
         $phone = preg_replace('/[^\d]/', '', $phone);
 
-        if($phone == ''){
+        if ($phone == '') {
             return $phone;
         }
 
@@ -601,8 +633,7 @@ class PluginEnomssl extends SSLPlugin
                 $actions[] = 'ResendApproverEmail (Resend Approver Email)';
             } else if ( $status == 'Certificate Issued' || $status == 'Approved by Domain Owner' ) {
                 $actions[] = 'ResendFulfillmentEmail (Resend Fulfillment Email)';
-            } else if ( $status == 'Certificate Issued' ) {
-
+                //} else if ( $status == 'Certificate Issued' ) {
             }
         } catch ( CE_Exception $e ) {
             $actions[] = 'Purchase';
